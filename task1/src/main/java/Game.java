@@ -1,13 +1,18 @@
 public class Game {
     public static void main(String[] args) {
         Generator generator = new Generator();
-        String new_str = generator.generateNum();
+        String generatedStr = generator.generateNum();
+        InputData inputData = new InputData(generatedStr);
+        InputReader reader = new InputReader();
+        int numOfBulls = 0;
 
-        InputData reader = new InputData(new_str);
-        String user_str = reader.readStr();
-
-        while (reader.countCowsAndBulls(user_str) != new_str.length()) {
-            user_str = reader.readStr();
-        }
+        do {
+            String userStr = reader.readLine();
+            try {
+                numOfBulls = inputData.countCowsAndBulls(userStr);
+            } catch (WrongInputException exception) {
+                System.out.println(exception.getMessage());
+            }
+        } while (numOfBulls != generatedStr.length());
     }
 }
