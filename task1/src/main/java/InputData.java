@@ -5,10 +5,20 @@ class WrongInputException extends Exception {
 }
 
 class InputData {
-    private String numGenerated;
+    private final String numGenerated;
+    private int cows = 0;
+    private int bulls = 0;
 
     public InputData(String numGenerated) {
         this.numGenerated = numGenerated;
+    }
+
+    public int getBulls() {
+        return bulls;
+    }
+
+    public int getCows() {
+        return cows;
     }
 
     private boolean isCorrectStr(String input_str) {
@@ -25,13 +35,14 @@ class InputData {
         return true;
     }
 
-    public int countCowsAndBulls(String str) throws WrongInputException {
+    public void countCowsAndBulls(String str) throws WrongInputException {
         if (!isCorrectStr(str)) {
             throw new WrongInputException ("Possible lenght is " + numGenerated.length() +
                     ", correct format is digits 0..9, all are different.");
         }
 
-        int sameNumGenerated = 0, bulls = 0;
+        int sameNumGenerated = 0;
+        int bulls = 0;
         for (int i = 0; i < str.length(); i++) {
             if (str.charAt(i) == numGenerated.charAt(i))
                 bulls++;
@@ -39,10 +50,14 @@ class InputData {
                 sameNumGenerated++;
         }
 
-        System.out.println("Cows: " + (sameNumGenerated - bulls) + ", bulls: " + bulls);
-        if (bulls == numGenerated.length()) {
+        this.bulls = bulls;
+        this.cows = sameNumGenerated - this.bulls;
+    }
+
+    public void printCowsAndBulls() {
+        System.out.println("Cows: " + this.cows + ", bulls: " + this.bulls);
+        if (this.bulls == numGenerated.length()) {
             System.out.println("Congrats! You've guessed the string.");
         }
-        return bulls;
     }
 }

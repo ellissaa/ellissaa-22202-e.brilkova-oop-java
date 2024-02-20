@@ -27,9 +27,35 @@ public class InputDataTest {
     public void test4() {
         InputData input = new InputData("1234");
         try {
-            Assert.assertEquals(input.countCowsAndBulls("1234"), 4);
+            input.countCowsAndBulls("1345");
         } catch (WrongInputException exception) {
             System.out.println(exception.getMessage());
         }
+        Assert.assertEquals(input.getBulls(), 1);
+        Assert.assertEquals(input.getCows(), 2);
+    }
+
+    @Test
+    public void test5() {
+        InputData input = new InputData("1234");
+        try {
+            input.countCowsAndBulls("4123");
+        } catch (WrongInputException exception) {
+            System.out.println(exception.getMessage());
+        }
+        Assert.assertEquals(input.getBulls(), 0);
+        Assert.assertEquals(input.getCows(), 4);
+    }
+
+    @Test
+    public void test6() {
+        InputData input = new InputData("1234");
+        try {
+            input.countCowsAndBulls("1234");
+        } catch (WrongInputException exception) {
+            System.out.println(exception.getMessage());
+        }
+        Assert.assertEquals(input.getBulls(), 4);
+        Assert.assertEquals(input.getCows(), 0);
     }
 }

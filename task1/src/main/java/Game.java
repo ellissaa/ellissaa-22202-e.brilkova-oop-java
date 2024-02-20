@@ -4,15 +4,15 @@ public class Game {
         String generatedStr = generator.generateNum();
         InputData inputData = new InputData(generatedStr);
         InputReader reader = new InputReader();
-        int numOfBulls = 0;
 
         do {
             String userStr = reader.readLine();
             try {
-                numOfBulls = inputData.countCowsAndBulls(userStr);
+                inputData.countCowsAndBulls(userStr);
+                inputData.printCowsAndBulls();
             } catch (WrongInputException exception) {
                 System.out.println(exception.getMessage());
             }
-        } while (numOfBulls != generatedStr.length());
+        } while (inputData.getBulls() != generatedStr.length());
     }
 }
