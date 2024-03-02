@@ -4,12 +4,12 @@ class WrongInputException extends Exception {
     }
 }
 
-class InputData {
+class GameController {
     private final String numGenerated;
     private int cows = 0;
     private int bulls = 0;
 
-    public InputData(String numGenerated) {
+    public GameController(String numGenerated) {
         this.numGenerated = numGenerated;
     }
 
