@@ -53,11 +53,4 @@ class InputData {
         this.bulls = bulls;
         this.cows = sameNumGenerated - this.bulls;
     }
-
-    public void printCowsAndBulls() {
-        System.out.println("Cows: " + this.cows + ", bulls: " + this.bulls);
-        if (this.bulls == numGenerated.length()) {
-            System.out.println("Congrats! You've guessed the string.");
-        }
-    }
 }
