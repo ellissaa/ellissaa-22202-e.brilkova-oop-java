@@ -1,31 +1,31 @@
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class InputDataTest {
+public class GameControllerTest {
     @Test
     public void test1() {
-        InputData input = new InputData("1234");
+        GameController input = new GameController("1234");
         Assert.expectThrows(WrongInputException.class,
                 () -> input.countCowsAndBulls("bad line"));
     }
 
     @Test
     public void test2() {
-        InputData input = new InputData("1234");
+        GameController input = new GameController("1234");
         Assert.expectThrows(WrongInputException.class,
                 () -> input.countCowsAndBulls("12345"));
     }
 
     @Test
     public void test3() {
-        InputData input = new InputData("1234");
+        GameController input = new GameController("1234");
         Assert.expectThrows(WrongInputException.class,
                 () -> input.countCowsAndBulls("1123"));
     }
 
     @Test
     public void test4() {
-        InputData input = new InputData("1234");
+        GameController input = new GameController("1234");
         try {
             input.countCowsAndBulls("1345");
         } catch (WrongInputException exception) {
@@ -37,7 +37,7 @@ public class InputDataTest {
 
     @Test
     public void test5() {
-        InputData input = new InputData("1234");
+        GameController input = new GameController("1234");
         try {
             input.countCowsAndBulls("4123");
         } catch (WrongInputException exception) {
@@ -49,7 +49,7 @@ public class InputDataTest {
 
     @Test
     public void test6() {
-        InputData input = new InputData("1234");
+        GameController input = new GameController("1234");
         try {
             input.countCowsAndBulls("1234");
         } catch (WrongInputException exception) {
