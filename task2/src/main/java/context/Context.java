@@ -1,12 +1,10 @@
 package context;
 
-import exceptions.NEmptyStackException;
-
 import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.Stack;
 
-public class Context {
+public class Context { // используем функции для стека и мапы
     private Stack<Double> numStack = new Stack<>();
     private HashMap<String, Double> values = new HashMap<>();
 
