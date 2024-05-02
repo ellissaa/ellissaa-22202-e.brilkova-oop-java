@@ -10,5 +10,6 @@ public class Main {
         SwingUtilities.invokeLater(() -> {
             Console console = new Console(gameModel);
         });
+        gameModel.start();
     }
 }

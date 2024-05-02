@@ -1,3 +1,5 @@
+package controller;
+
 import game_model.Model;
 import game_model.objects.Player;
 
@@ -6,6 +8,7 @@ import java.awt.event.KeyListener;
 
 public class Controller implements KeyListener {
     private final Model gameModel;
+    private long lastShotTime;
 
     public Controller(Model gameModel) {
         this.gameModel = gameModel;
@@ -18,14 +21,18 @@ public class Controller implements KeyListener {
     public void keyPressed(KeyEvent e) {
         Player player = gameModel.getPlayer();
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_D:
-                player.setSpeedX(10);
+            case KeyEvent.VK_RIGHT:
+                player.setSpeedX(Player.playerSpeed);
                 break;
-            case KeyEvent.VK_A:
-                player.setSpeedX(-10);
+            case KeyEvent.VK_LEFT:
+                player.setSpeedX(-Player.playerSpeed);
                 break;
             case KeyEvent.VK_SPACE:
-                gameModel.playerShoot();
+                long currTime = System.currentTimeMillis();
+                if (currTime - lastShotTime > 500) {
+                    gameModel.playerShoot();
+                    lastShotTime = currTime;
+                }
                 break;
         }
     }
@@ -33,7 +40,7 @@ public class Controller implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
         Player player = gameModel.getPlayer();
-        if (e.getKeyCode() == KeyEvent.VK_D ||
-                e.getKeyCode() == KeyEvent.VK_A) player.setSpeedX(0);
+        if (e.getKeyCode() == KeyEvent.VK_LEFT ||
+                e.getKeyCode() == KeyEvent.VK_RIGHT) player.setSpeedX(0);
     }
 }

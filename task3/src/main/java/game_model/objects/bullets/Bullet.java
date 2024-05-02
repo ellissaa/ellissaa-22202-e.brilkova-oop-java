@@ -10,7 +10,7 @@ public abstract class Bullet extends Entity {
         int bulletY, speedY;
 
         if (direct == BulletDirection.UP) {
-            bulletY = shooter.getY() + height;
+            bulletY = shooter.getY() - height;
             speedY = -speed;
         } else {
             bulletY = shooter.getY() + shooter.getHeight();

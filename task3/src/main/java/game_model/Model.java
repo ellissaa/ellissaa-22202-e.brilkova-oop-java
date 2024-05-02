@@ -7,19 +7,17 @@ import game_model.objects.enemies.EnemyDefault;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class Model implements AutoCloseable {
     private int score = 0;
-    public static final int fieldWidth = 400;
-    public static final int fieldHeight = 300;
+    public static final int fieldWidth = 1000;
+    public static final int fieldHeight = 600;
 
     private final Player player;
-    private final List<Ship> ships;
-    private final List<Bullet> bullets;
+    private List<Ship> ships;
+    private List<Bullet> bullets;
     private GameState gameState = GameState.RUN;
 
-    private final Random random = new Random();
     private final Thread tick;
     private ModelUpload upload;
 
@@ -31,72 +29,119 @@ public class Model implements AutoCloseable {
         initialize();
 
         tick = new Ticker(this);
-        tick.start();
+
     }
 
     public void initialize() {
         int offset = 25;
-        int gap = 5;
+        int gap = 15;
         int enemyWidth = EnemyDefault.enemyDefWidth + gap;
-        int enemyAmount = (fieldWidth - offset * 2 + gap) / enemyWidth;
 
-        for (int i = 0; i < enemyAmount; i++) {
-            ships.add(new EnemyDefault(offset + i * enemyWidth, 10));
+        for (int i = offset; i < (fieldWidth - offset); i += enemyWidth) {
+            ships.add(new EnemyDefault(i, 10));
         }
         ships.add(player);
     }
 
-    public void update() {
+    public void start() {
+        tick.start();
+    }
+
+    public void update() throws InterruptedException {
+        if (gameState == GameState.DEAD) {
+            notifyUpload();
+            close();
+            return;
+        }
         checkCollisions();
 
+        if (moveShip(player)) player.move();
+        int speedModifier = moveEnemies() ? 1 : -1;
         for (var ship : ships) {
-            moveShip(ship);
             if (ship == player) continue;
-            int randomInt = random.nextInt(10);
-            if (randomInt < 2) bullets.add(ship.shoot());
+            ship.setSpeedX(ship.getSpeedX() * speedModifier);
+            ship.move();
+
+            Bullet bullet = ship.shoot();
+            if (bullet != null) {
+                bullets.add(bullet);
+            }
         }
 
-        for (var bullet : bullets) {
-            moveBullet(bullet);
+        if (ships.size() == 1) {
+            initialize();
+            player.increaseHealth();
         }
         notifyUpload();
     }
 
     private void checkCollisions() {
+        List<Bullet> bulletsCopy = new ArrayList<>(bullets);
+        List<Ship> shipsCopy = new ArrayList<>(ships);
+
         for (var bullet : bullets) {
             for (var ship : ships) {
-                if (!bullet.collide(ship)) continue;
-
+                if (!bulletsCopy.contains(bullet) || !ships.contains(ship) ||
+                        !bullet.collide(ship)) continue;
                 ship.decreaseHealth();
-                bullets.remove(bullet);
+
+                bulletsCopy.remove(bullet);
                 if (ship.getHealth() == 0) {
                     if (ship == player) {
                         gameState = GameState.DEAD;
                         return;
                     }
-                    ships.remove(ship);
+                    shipsCopy.remove(ship);
                     score += 10;
                 }
             }
+            moveBullet(bullet, bulletsCopy);
         }
+        ships = shipsCopy;
+        bullets = bulletsCopy;
     }
 
-    private void moveShip(Ship ship) {
+    private boolean moveShip(Ship ship) {
         int newX = ship.getX() + ship.getSpeedX();
         int newY = ship.getY() + ship.getSpeedY();
-        if (0 <= newX && newX < fieldWidth && 0 <= newY && newY < fieldHeight)
-            ship.move();
+        return 0 <= newX && newX + ship.getWidth() <= fieldWidth
+                && 0 <= newY && newY + ship.getHeight() <= fieldHeight;
     }
 
-    private void moveBullet(Bullet bullet) {
+    private boolean moveEnemies() {
+        boolean allCanMove = true;
+        for (Ship ship : ships) {
+            if (ship == player) continue;
+            allCanMove = allCanMove && moveShip(ship);
+        }
+        return allCanMove;
+    }
+
+    private void moveBullet(Bullet bullet, List<Bullet> bulletsList) {
         bullet.move();
         int bottomY = bullet.getY() + bullet.getHeight();
         if (bottomY < 0 || bullet.getY() >= fieldHeight)
-            bullets.remove(bullet);
+            bulletsList.remove(bullet);
     }
 
     public Player getPlayer() {
         return player;
+    }
+
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public List<Ship> getShip() {
+        return ships;
+    }
+
+    public List<Bullet> getBullets() {
+        return bullets;
+    }
+
+    public int getScore() {
+        return score;
     }
 
     public void playerShoot() {
