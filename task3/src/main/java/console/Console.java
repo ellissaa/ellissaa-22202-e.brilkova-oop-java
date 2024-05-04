@@ -94,7 +94,7 @@ public class Console extends JFrame implements ModelUpload {
 
     private void placeEnemies() {
         List<Ship> shipsCopy = new ArrayList<>(gameModel.getShip());
-        for (var ship : shipsCopy) {
+        for (Ship ship : shipsCopy) {
             if (ship == gameModel.getPlayer()) continue;
 
             JLabel enemyLabel = new JLabel(enemyIcon);
@@ -111,7 +111,7 @@ public class Console extends JFrame implements ModelUpload {
 
     private void placeBullets() {
         List<Bullet> bulletsCopy = new ArrayList<>(gameModel.getBullets());
-        for (var bullet : bulletsCopy) {
+        for (Bullet bullet : bulletsCopy) {
             JLabel bulletLabel = new JLabel();
             bulletLabel.setBounds(bullet.getX(), bullet.getY(),
                     bullet.getWidth(), bullet.getHeight());

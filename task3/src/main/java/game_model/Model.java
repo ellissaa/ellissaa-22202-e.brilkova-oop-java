@@ -57,7 +57,7 @@ public class Model implements AutoCloseable {
 
         if (moveShip(player)) player.move();
         int speedModifier = moveEnemies() ? 1 : -1;
-        for (var ship : ships) {
+        for (Ship ship : ships) {
             if (ship == player) continue;
             ship.setSpeedX(ship.getSpeedX() * speedModifier);
             ship.move();
@@ -79,8 +79,8 @@ public class Model implements AutoCloseable {
         List<Bullet> bulletsCopy = new ArrayList<>(bullets);
         List<Ship> shipsCopy = new ArrayList<>(ships);
 
-        for (var bullet : bullets) {
-            for (var ship : ships) {
+        for (Bullet bullet : bullets) {
+            for (Ship ship : ships) {
                 if (!bulletsCopy.contains(bullet) || !ships.contains(ship) ||
                         !bullet.collide(ship)) continue;
                 ship.decreaseHealth();
