@@ -1,4 +1,4 @@
-package game_model;
+package model;
 
 public interface ModelUpload {
     void modelChange();

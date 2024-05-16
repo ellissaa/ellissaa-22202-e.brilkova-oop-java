@@ -1,19 +1,19 @@
-package console;
+package view;
 
 import controller.Controller;
-import game_model.GameState;
-import game_model.Model;
-import game_model.ModelUpload;
-import game_model.objects.Player;
-import game_model.objects.Ship;
-import game_model.objects.bullets.Bullet;
+import model.GameState;
+import model.Model;
+import model.ModelUpload;
+import model.objects.Player;
+import model.objects.Ship;
+import model.objects.bullets.Bullet;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Console extends JFrame implements ModelUpload {
+public class View extends JFrame implements ModelUpload {
     private final Model gameModel;
     private final JLabel playerLabel;
     private final JLabel healthLabel;
@@ -23,21 +23,25 @@ public class Console extends JFrame implements ModelUpload {
 
     private final ImageIcon enemyIcon;
 
-    public Console(Model gameModel) {
+    public View(Model gameModel) {
         super("Space Invaders");
-        this.gameModel = gameModel;
-        gameModel.setUpload(this);
-        addKeyListener(new Controller(gameModel));
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(null);
         setResizable(false);
+        setLayout(null);
         setVisible(true);
 
         Insets border = getInsets();
         setSize(Model.fieldWidth + border.left + border.right,
                 Model.fieldHeight + border.top + border.bottom);
         setLocationRelativeTo(null);
+
+        getContentPane().setBackground(new Color(234, 234, 238));
+
+        this.gameModel = gameModel;
+        gameModel.setUpload(this);
+        addKeyListener(new Controller(gameModel));
+
         getContentPane().setBackground(new Color(12, 12, 19));
 
         playerLabel = createPlayer();

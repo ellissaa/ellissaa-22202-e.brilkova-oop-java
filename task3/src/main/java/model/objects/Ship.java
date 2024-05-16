@@ -1,6 +1,6 @@
-package game_model.objects;
+package model.objects;
 
-import game_model.objects.bullets.Bullet;
+import model.objects.bullets.Bullet;
 
 public abstract class Ship extends Entity {
     protected int health;

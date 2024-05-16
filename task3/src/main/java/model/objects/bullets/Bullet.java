@@ -1,7 +1,7 @@
-package game_model.objects.bullets;
+package model.objects.bullets;
 
-import game_model.objects.Entity;
-import game_model.objects.Ship;
+import model.objects.Entity;
+import model.objects.Ship;
 
 public abstract class Bullet extends Entity {
     protected Bullet(Ship shooter, int width, int height, int speed, BulletDirection direct) {

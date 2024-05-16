@@ -1,4 +1,4 @@
-package game_model.objects;
+package model.objects;
 
 public abstract class Entity {
     protected int speedX;

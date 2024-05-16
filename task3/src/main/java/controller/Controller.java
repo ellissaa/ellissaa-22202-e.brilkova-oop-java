@@ -1,17 +1,19 @@
 package controller;
 
-import game_model.Model;
-import game_model.objects.Player;
+import model.Model;
+import model.objects.Player;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class Controller implements KeyListener {
+public class Controller implements KeyListener, AutoCloseable {
     private final Model gameModel;
-    private long lastShotTime;
+    private final Ticker ticker;
 
     public Controller(Model gameModel) {
         this.gameModel = gameModel;
+        ticker = new Ticker(gameModel);
+        ticker.start();
     }
 
     @Override
@@ -19,28 +21,29 @@ public class Controller implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        Player player = gameModel.getPlayer();
         switch (e.getKeyCode()) {
             case KeyEvent.VK_RIGHT:
-                player.setSpeedX(Player.playerSpeed);
+                gameModel.updatePlayerSpeed(Player.playerSpeed);
                 break;
             case KeyEvent.VK_LEFT:
-                player.setSpeedX(-Player.playerSpeed);
+                gameModel.updatePlayerSpeed(-Player.playerSpeed);
                 break;
             case KeyEvent.VK_SPACE:
-                long currTime = System.currentTimeMillis();
-                if (currTime - lastShotTime > 500) {
-                    gameModel.playerShoot();
-                    lastShotTime = currTime;
-                }
+                gameModel.playerShoot();
                 break;
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        Player player = gameModel.getPlayer();
         if (e.getKeyCode() == KeyEvent.VK_LEFT ||
-                e.getKeyCode() == KeyEvent.VK_RIGHT) player.setSpeedX(0);
+                e.getKeyCode() == KeyEvent.VK_RIGHT)
+            gameModel.updatePlayerSpeed(0);
+    }
+
+    @Override
+    public void close() throws InterruptedException {
+        ticker.interrupt();
+        ticker.join();
     }
 }

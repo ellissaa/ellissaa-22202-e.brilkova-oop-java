@@ -1,10 +1,12 @@
-package game_model;
+package controller;
+
+import model.Model;
 
 public class Ticker extends Thread {
-    private final Model model;
+    private final Model gameModel;
 
-    public Ticker(Model model) {
-        this.model = model;
+    public Ticker(Model gameModel) {
+        this.gameModel = gameModel;
     }
 
     @Override
@@ -12,7 +14,7 @@ public class Ticker extends Thread {
         while (!isInterrupted()) {
             try {
                 Thread.sleep(10);
-                model.update();
+                gameModel.update();
             } catch (InterruptedException e) {
                 break;
             }

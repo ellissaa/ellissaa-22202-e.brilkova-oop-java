@@ -1,14 +1,14 @@
-package game_model;
+package model;
 
-import game_model.objects.Player;
-import game_model.objects.Ship;
-import game_model.objects.bullets.Bullet;
-import game_model.objects.enemies.EnemyDefault;
+import model.objects.Player;
+import model.objects.Ship;
+import model.objects.bullets.Bullet;
+import model.objects.enemies.EnemyDefault;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Model implements AutoCloseable {
+public class Model {
     private int score = 0;
     public static final int fieldWidth = 1000;
     public static final int fieldHeight = 600;
@@ -17,45 +17,53 @@ public class Model implements AutoCloseable {
     private List<Ship> ships;
     private List<Bullet> bullets;
     private GameState gameState = GameState.RUN;
+    private GameDifficulty difficulty;
 
-    private final Thread tick;
     private ModelUpload upload;
 
-    public Model() {
+    public Model(GameDifficulty difficulty) {
+        this.difficulty = difficulty;
+
+        int shootTimeout = switch (difficulty) {
+            case LEVEL1 -> 700;
+            case LEVEL2 -> 900;
+            case LEVEL3 -> 1100;
+        };
+
         player = new Player(fieldWidth / 2 - Player.playerWidth / 2,
-                fieldHeight - Player.playerHeight);
+                fieldHeight - Player.playerHeight, shootTimeout);
+
         ships = new ArrayList<>();
         bullets = new ArrayList<>();
-        initialize();
-
-        tick = new Ticker(this);
-
+        spawnEnemies();
+        ships.add(player);
     }
 
-    public void initialize() {
+    public void spawnEnemies() {
         int offset = 25;
         int gap = 15;
         int enemyWidth = EnemyDefault.enemyDefWidth + gap;
 
-        for (int i = offset; i < (fieldWidth - offset); i += enemyWidth) {
-            ships.add(new EnemyDefault(i, 10));
-        }
-        ships.add(player);
-    }
+        int shootFreqModifier = switch (difficulty) {
+            case LEVEL1 -> 1500;
+            case LEVEL2 -> 800;
+            case LEVEL3 -> 400;
+        };
 
-    public void start() {
-        tick.start();
+        for (int i = offset; i < (fieldWidth - offset); i += enemyWidth) {
+            ships.add(new EnemyDefault(i, 10, shootFreqModifier));
+        }
     }
 
     public void update() throws InterruptedException {
         if (gameState == GameState.DEAD) {
             notifyUpload();
-            close();
             return;
         }
+
         checkCollisions();
 
-        if (moveShip(player)) player.move();
+        if (canMove(player)) player.move();
         int speedModifier = moveEnemies() ? 1 : -1;
         for (Ship ship : ships) {
             if (ship == player) continue;
@@ -69,7 +77,7 @@ public class Model implements AutoCloseable {
         }
 
         if (ships.size() == 1) {
-            initialize();
+            spawnEnemies();
             player.increaseHealth();
         }
         notifyUpload();
@@ -92,7 +100,11 @@ public class Model implements AutoCloseable {
                         return;
                     }
                     shipsCopy.remove(ship);
-                    score += 10;
+                    score += switch (difficulty) {
+                        case LEVEL1 -> 10;
+                        case LEVEL2 -> 15;
+                        case LEVEL3 -> 20;
+                    };
                 }
             }
             moveBullet(bullet, bulletsCopy);
@@ -101,7 +113,7 @@ public class Model implements AutoCloseable {
         bullets = bulletsCopy;
     }
 
-    private boolean moveShip(Ship ship) {
+    private boolean canMove(Ship ship) {
         int newX = ship.getX() + ship.getSpeedX();
         int newY = ship.getY() + ship.getSpeedY();
         return 0 <= newX && newX + ship.getWidth() <= fieldWidth
@@ -112,7 +124,7 @@ public class Model implements AutoCloseable {
         boolean allCanMove = true;
         for (Ship ship : ships) {
             if (ship == player) continue;
-            allCanMove = allCanMove && moveShip(ship);
+            allCanMove = allCanMove && canMove(ship);
         }
         return allCanMove;
     }
@@ -122,6 +134,16 @@ public class Model implements AutoCloseable {
         int bottomY = bullet.getY() + bullet.getHeight();
         if (bottomY < 0 || bullet.getY() >= fieldHeight)
             bulletsList.remove(bullet);
+    }
+
+    public void playerShoot() {
+        Bullet newBullet = player.shoot();
+        if (newBullet == null) return;
+        bullets.add(newBullet);
+    }
+
+    public void updatePlayerSpeed(int newSpeed) {
+        player.setSpeedX(newSpeed);
     }
 
     public Player getPlayer() {
@@ -144,9 +166,8 @@ public class Model implements AutoCloseable {
         return score;
     }
 
-    public void playerShoot() {
-        bullets.add(player.shoot());
-        notifyUpload();
+    public void setDifficulty(GameDifficulty difficulty) {
+        this.difficulty = difficulty;
     }
 
     private void notifyUpload() {
@@ -156,11 +177,5 @@ public class Model implements AutoCloseable {
 
     public void setUpload(ModelUpload upload) {
         this.upload = upload;
-    }
-
-    @Override
-    public void close() throws InterruptedException {
-        tick.interrupt();
-        tick.join();
     }
 }

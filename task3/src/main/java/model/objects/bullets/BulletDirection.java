@@ -1,4 +1,4 @@
-package game_model.objects.bullets;
+package model.objects.bullets;
 
 public enum BulletDirection {
     UP,

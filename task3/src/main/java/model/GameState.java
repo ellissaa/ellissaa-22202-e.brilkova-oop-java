@@ -1,4 +1,4 @@
-package game_model;
+package model;
 
 public enum GameState {
     RUN,
