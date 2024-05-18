@@ -61,9 +61,9 @@ public class StartUpScreen extends JFrame implements ActionListener {
             default -> GameDifficulty.LEVEL3;
         };
 
-        GameController gameModel = new GameController(difficulty);
+        GameController gameController = new GameController(difficulty);
         SwingUtilities.invokeLater(() -> {
-            View view = new View(gameModel);
+            View view = new View(gameController);
             dispose();
         });
     }

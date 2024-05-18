@@ -1,9 +1,8 @@
 package view;
 
-import controller.UserAplication;
 import model.GameState;
 import controller.GameController;
-import model.ModelUpload;
+import model.ModelListener;
 import model.Player;
 import model.Ship;
 import model.bullets.Bullet;
@@ -13,8 +12,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class View extends JFrame implements ModelUpload {
-    private final GameController gameModel;
+public class View extends JFrame implements ModelListener {
+    private final GameController gameController;
     private final JLabel playerLabel;
     private final JLabel healthLabel;
     private final JLabel scoreLabel;
@@ -23,7 +22,7 @@ public class View extends JFrame implements ModelUpload {
 
     private final ImageIcon enemyIcon;
 
-    public View(GameController gameModel) {
+    public View(GameController gameController) {
         super("Space Invaders");
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -38,9 +37,9 @@ public class View extends JFrame implements ModelUpload {
 
         getContentPane().setBackground(new Color(234, 234, 238));
 
-        this.gameModel = gameModel;
-        gameModel.setUpload(this);
-        addKeyListener(new UserAplication(gameModel));
+        this.gameController = gameController;
+        gameController.setModelListener(this);
+        addKeyListener(gameController);
 
         getContentPane().setBackground(new Color(12, 12, 19));
 
@@ -64,7 +63,7 @@ public class View extends JFrame implements ModelUpload {
     private JLabel createPlayer() {
         ImageIcon playerIcon = setIcon("/player.png");
         JLabel label = new JLabel(playerIcon);
-        Player player = gameModel.getPlayer();
+        Player player = gameController.getPlayer();
 
         label.setBounds(player.getX(), player.getY(),
                 player.getWidth(), player.getHeight());
@@ -73,7 +72,7 @@ public class View extends JFrame implements ModelUpload {
 
     private JLabel createHealth() {
         JLabel health = new JLabel();
-        health.setText("Health: " + gameModel.getPlayer().getHealth());
+        health.setText("Health: " + gameController.getPlayer().getHealth());
         health.setFont(new Font("Times New Roman", Font.BOLD, 20));
         health.setForeground(new Color(168, 228, 160)); // "бабушкины яблоки" :)
         health.setBounds(50, 500, 100, 30);
@@ -82,7 +81,7 @@ public class View extends JFrame implements ModelUpload {
 
     private JLabel createScore() {
         JLabel score = new JLabel();
-        score.setText("Health: " + gameModel.getPlayer().getHealth());
+        score.setText("Health: " + gameController.getPlayer().getHealth());
         score.setFont(new Font("Times New Roman", Font.BOLD, 15));
         score.setForeground(new Color(125, 143, 232));
         score.setBounds(50, 520, 100, 30);
@@ -97,9 +96,9 @@ public class View extends JFrame implements ModelUpload {
     }
 
     private void placeEnemies() {
-        List<Ship> shipsCopy = new ArrayList<>(gameModel.getShip());
+        List<Ship> shipsCopy = new ArrayList<>(gameController.getShips());
         for (Ship ship : shipsCopy) {
-            if (ship == gameModel.getPlayer()) continue;
+            if (ship == gameController.getPlayer()) continue;
 
             JLabel enemyLabel = new JLabel(enemyIcon);
             enemyLabel.setBounds(ship.getX(), ship.getY(),
@@ -114,7 +113,7 @@ public class View extends JFrame implements ModelUpload {
     }
 
     private void placeBullets() {
-        List<Bullet> bulletsCopy = new ArrayList<>(gameModel.getBullets());
+        List<Bullet> bulletsCopy = new ArrayList<>(gameController.getBullets());
         for (Bullet bullet : bulletsCopy) {
             JLabel bulletLabel = new JLabel();
             bulletLabel.setBounds(bullet.getX(), bullet.getY(),
@@ -150,7 +149,7 @@ public class View extends JFrame implements ModelUpload {
             add(gameOver);
 
             JLabel finalScore = new JLabel();
-            finalScore.setText("Your score: " + gameModel.getScore());
+            finalScore.setText("Your score: " + gameController.getScore());
             finalScore.setFont(new Font("Courier New", Font.ITALIC, 20));
             finalScore.setForeground(Color.WHITE);
             finalScore.setBounds(420, 150, 500, 50);
@@ -162,18 +161,18 @@ public class View extends JFrame implements ModelUpload {
 
     @Override
     public void modelChange() {
-        if (gameModel.getGameState() == GameState.DEAD) {
+        if (gameController.getGameState() == GameState.DEAD) {
             screenGameOver();
             return;
         }
 
         SwingUtilities.invokeLater(() -> {
-            Player player = gameModel.getPlayer();
+            Player player = gameController.getPlayer();
             playerLabel.setLocation(player.getX(), player.getY());
             updateEnemies();
             updateBullets();
 
-            scoreLabel.setText("Score: " + gameModel.getScore());
+            scoreLabel.setText("Score: " + gameController.getScore());
             healthLabel.setText("Health: " + player.getHealth());
 
             repaint();

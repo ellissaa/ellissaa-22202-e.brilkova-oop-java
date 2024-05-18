@@ -1,18 +1,19 @@
 package controller;
 
 public class Ticker extends Thread {
-    private final GameController gameModel;
+    private TickerListener tickerListener;
 
-    public Ticker(GameController gameModel) {
-        this.gameModel = gameModel;
+    public void setTickerListener(TickerListener tickerListener) {
+        this.tickerListener = tickerListener;
     }
 
     @Override
     public void run() {
         while (!isInterrupted()) {
             try {
-                Thread.sleep(10);
-                gameModel.update();
+                Thread.sleep(15);
+                if (tickerListener != null)
+                    tickerListener.ticked();
             } catch (InterruptedException e) {
                 break;
             }

@@ -4,10 +4,12 @@ import model.*;
 import model.bullets.Bullet;
 import model.enemies.EnemyDefault;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameController {
+public class GameController implements KeyListener, TickerListener {
     private int score = 0;
     public static final int fieldWidth = 1000;
     public static final int fieldHeight = 600;
@@ -16,9 +18,10 @@ public class GameController {
     private List<Ship> ships;
     private List<Bullet> bullets;
     private GameState gameState = GameState.RUN;
-    private GameDifficulty difficulty;
+    private final GameDifficulty difficulty;
 
-    private ModelUpload upload;
+    private ModelListener modelListener;
+    private final Ticker ticker;
 
     public GameController(GameDifficulty difficulty) {
         this.difficulty = difficulty;
@@ -36,6 +39,10 @@ public class GameController {
         bullets = new ArrayList<>();
         spawnEnemies();
         ships.add(player);
+
+        ticker = new Ticker();
+        ticker.setTickerListener(this);
+        ticker.start();
     }
 
     public void spawnEnemies() {
@@ -54,9 +61,9 @@ public class GameController {
         }
     }
 
-    public void update() throws InterruptedException {
+    public void update() {
         if (gameState == GameState.DEAD) {
-            notifyUpload();
+            notifyListener();
             return;
         }
 
@@ -79,7 +86,7 @@ public class GameController {
             spawnEnemies();
             player.increaseHealth();
         }
-        notifyUpload();
+        notifyListener();
     }
 
     private void checkCollisions() {
@@ -135,16 +142,6 @@ public class GameController {
             bulletsList.remove(bullet);
     }
 
-    public void playerShoot() {
-        Bullet newBullet = player.shoot();
-        if (newBullet == null) return;
-        bullets.add(newBullet);
-    }
-
-    public void updatePlayerSpeed(int newSpeed) {
-        player.setSpeedX(newSpeed);
-    }
-
     public Player getPlayer() {
         return player;
     }
@@ -153,7 +150,7 @@ public class GameController {
         return gameState;
     }
 
-    public List<Ship> getShip() {
+    public List<Ship> getShips() {
         return ships;
     }
 
@@ -165,16 +162,48 @@ public class GameController {
         return score;
     }
 
-    public void setDifficulty(GameDifficulty difficulty) {
-        this.difficulty = difficulty;
+    public void setModelListener(ModelListener modelListener) {
+        this.modelListener = modelListener;
     }
 
-    private void notifyUpload() {
-        if (upload != null)
-            upload.modelChange();
+    private void notifyListener() {
+        if (modelListener != null)
+            modelListener.modelChange();
     }
 
-    public void setUpload(ModelUpload upload) {
-        this.upload = upload;
+    public void playerShoot() {
+        Bullet newBullet = player.shoot();
+        if (newBullet == null) return;
+        bullets.add(newBullet);
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {}
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_RIGHT:
+                player.setSpeedX(Player.playerSpeed);
+                break;
+            case KeyEvent.VK_LEFT:
+                player.setSpeedX(-Player.playerSpeed);
+                break;
+            case KeyEvent.VK_SPACE:
+                playerShoot();
+                break;
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_LEFT ||
+                e.getKeyCode() == KeyEvent.VK_RIGHT)
+            player.setSpeedX(0);
+    }
+
+    @Override
+    public void ticked() {
+        update();
     }
 }

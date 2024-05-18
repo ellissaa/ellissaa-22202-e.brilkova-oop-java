@@ -1,5 +1,5 @@
 package model;
 
-public interface ModelUpload {
+public interface ModelListener {
     void modelChange();
 }
