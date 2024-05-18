@@ -1,12 +1,12 @@
 package view;
 
-import controller.Controller;
+import controller.UserAplication;
 import model.GameState;
-import model.Model;
+import controller.GameController;
 import model.ModelUpload;
-import model.objects.Player;
-import model.objects.Ship;
-import model.objects.bullets.Bullet;
+import model.Player;
+import model.Ship;
+import model.bullets.Bullet;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class View extends JFrame implements ModelUpload {
-    private final Model gameModel;
+    private final GameController gameModel;
     private final JLabel playerLabel;
     private final JLabel healthLabel;
     private final JLabel scoreLabel;
@@ -23,7 +23,7 @@ public class View extends JFrame implements ModelUpload {
 
     private final ImageIcon enemyIcon;
 
-    public View(Model gameModel) {
+    public View(GameController gameModel) {
         super("Space Invaders");
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -32,15 +32,15 @@ public class View extends JFrame implements ModelUpload {
         setVisible(true);
 
         Insets border = getInsets();
-        setSize(Model.fieldWidth + border.left + border.right,
-                Model.fieldHeight + border.top + border.bottom);
+        setSize(GameController.fieldWidth + border.left + border.right,
+                GameController.fieldHeight + border.top + border.bottom);
         setLocationRelativeTo(null);
 
         getContentPane().setBackground(new Color(234, 234, 238));
 
         this.gameModel = gameModel;
         gameModel.setUpload(this);
-        addKeyListener(new Controller(gameModel));
+        addKeyListener(new UserAplication(gameModel));
 
         getContentPane().setBackground(new Color(12, 12, 19));
 
@@ -91,7 +91,7 @@ public class View extends JFrame implements ModelUpload {
 
     private JPanel createPanel() {
         JPanel panel = new JPanel(null);
-        panel.setBounds(0, 0, Model.fieldWidth, Model.fieldHeight);
+        panel.setBounds(0, 0, GameController.fieldWidth, GameController.fieldHeight);
         panel.setOpaque(false);
         return panel;
     }

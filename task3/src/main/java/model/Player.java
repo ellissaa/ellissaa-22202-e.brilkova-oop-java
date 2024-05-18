@@ -1,8 +1,8 @@
-package model.objects;
+package model;
 
-import model.objects.bullets.Bullet;
-import model.objects.bullets.BulletDefault;
-import model.objects.bullets.BulletDirection;
+import model.bullets.Bullet;
+import model.bullets.BulletDefault;
+import model.bullets.BulletDirection;
 
 public class Player extends Ship {
     public static final int playerWidth = 60;

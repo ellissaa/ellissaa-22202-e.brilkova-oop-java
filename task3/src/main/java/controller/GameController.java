@@ -1,14 +1,13 @@
-package model;
+package controller;
 
-import model.objects.Player;
-import model.objects.Ship;
-import model.objects.bullets.Bullet;
-import model.objects.enemies.EnemyDefault;
+import model.*;
+import model.bullets.Bullet;
+import model.enemies.EnemyDefault;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Model {
+public class GameController {
     private int score = 0;
     public static final int fieldWidth = 1000;
     public static final int fieldHeight = 600;
@@ -21,7 +20,7 @@ public class Model {
 
     private ModelUpload upload;
 
-    public Model(GameDifficulty difficulty) {
+    public GameController(GameDifficulty difficulty) {
         this.difficulty = difficulty;
 
         int shootTimeout = switch (difficulty) {

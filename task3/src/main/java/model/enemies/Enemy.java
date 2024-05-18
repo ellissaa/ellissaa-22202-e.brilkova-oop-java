@@ -1,7 +1,6 @@
-package model.objects.enemies;
+package model.enemies;
 
-import model.GameDifficulty;
-import model.objects.Ship;
+import model.Ship;
 
 public abstract class Enemy extends Ship {
     protected final int shootFrequencyModifier;

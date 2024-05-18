@@ -1,4 +1,4 @@
-package model.objects;
+package model;
 
 public abstract class Entity {
     protected int speedX;

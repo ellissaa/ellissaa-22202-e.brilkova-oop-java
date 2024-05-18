@@ -1,6 +1,6 @@
-package model.objects.bullets;
+package model.bullets;
 
-import model.objects.Ship;
+import model.Ship;
 
 public class BulletDefault extends Bullet {
     public BulletDefault(Ship shooter, BulletDirection direct) {

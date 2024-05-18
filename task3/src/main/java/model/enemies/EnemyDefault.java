@@ -1,8 +1,8 @@
-package model.objects.enemies;
+package model.enemies;
 
-import model.objects.bullets.Bullet;
-import model.objects.bullets.BulletDefault;
-import model.objects.bullets.BulletDirection;
+import model.bullets.Bullet;
+import model.bullets.BulletDefault;
+import model.bullets.BulletDirection;
 
 import java.util.Random;
 

@@ -1,11 +1,9 @@
 package controller;
 
-import model.Model;
-
 public class Ticker extends Thread {
-    private final Model gameModel;
+    private final GameController gameModel;
 
-    public Ticker(Model gameModel) {
+    public Ticker(GameController gameModel) {
         this.gameModel = gameModel;
     }
 

@@ -1,7 +1,7 @@
 package view;
 
 import model.GameDifficulty;
-import model.Model;
+import controller.GameController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -61,7 +61,7 @@ public class StartUpScreen extends JFrame implements ActionListener {
             default -> GameDifficulty.LEVEL3;
         };
 
-        Model gameModel = new Model(difficulty);
+        GameController gameModel = new GameController(difficulty);
         SwingUtilities.invokeLater(() -> {
             View view = new View(gameModel);
             dispose();

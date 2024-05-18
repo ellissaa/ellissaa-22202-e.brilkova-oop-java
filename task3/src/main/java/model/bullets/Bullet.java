@@ -1,7 +1,7 @@
-package model.objects.bullets;
+package model.bullets;
 
-import model.objects.Entity;
-import model.objects.Ship;
+import model.Entity;
+import model.Ship;
 
 public abstract class Bullet extends Entity {
     protected Bullet(Ship shooter, int width, int height, int speed, BulletDirection direct) {

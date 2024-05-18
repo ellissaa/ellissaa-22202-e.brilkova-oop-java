@@ -1,6 +1,7 @@
-package model.objects;
+package model;
 
-import model.objects.bullets.Bullet;
+import model.Entity;
+import model.bullets.Bullet;
 
 public abstract class Ship extends Entity {
     protected int health;

@@ -1,8 +1,5 @@
 package view;
 
-import model.GameDifficulty;
-import model.Model;
-
 import javax.swing.*;
 
 public class Main {
