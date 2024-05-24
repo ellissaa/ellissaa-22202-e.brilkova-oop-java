@@ -33,8 +33,4 @@ public abstract class Supplier<T extends AbstractProduct> {
     public void setSupplyTimeout(int supplyTimeout) {
         this.supplyTimeout = supplyTimeout;
     }
-
-    public int getSupplyTimeout() {
-        return supplyTimeout;
-    }
 }
