@@ -96,20 +96,44 @@ public class View extends JFrame implements ModelListener {
     @Override
     public void numStoredUpdated(int newNumStored, StockId stockId) {
         switch (stockId) {
-            case ACCESSORY -> accessoryCounter.setCounter(newNumStored);
-            case BODY -> bodyCounter.setCounter(newNumStored);
-            case CAR -> carCounter.setCounter(newNumStored);
-            case ENGINE -> engineCounter.setCounter(newNumStored);
+            case ACCESSORY : {
+                accessoryCounter.setCounter(newNumStored);
+                break;
+            }
+            case BODY : {
+                bodyCounter.setCounter(newNumStored);
+                break;
+            }
+            case CAR : {
+                carCounter.setCounter(newNumStored);
+                break;
+            }
+            case ENGINE : {
+                engineCounter.setCounter(newNumStored);
+                break;
+            }
         }
     }
 
     @Override
     public void newItem(StockId stockId) {
         switch (stockId) {
-            case ACCESSORY -> accessoryProducedCounter.increment();
-            case BODY -> bodyProducedCounter.increment();
-            case ENGINE -> engineProducedCounter.increment();
-            case CAR -> carProducedCounter.increment();
+            case ACCESSORY : {
+                accessoryProducedCounter.increment();
+                break;
+            }
+            case BODY : {
+                bodyProducedCounter.increment();
+                break;
+            }
+            case ENGINE : {
+                engineProducedCounter.increment();
+                break;
+            }
+            case CAR : {
+                carProducedCounter.increment();
+                break;
+            }
         }
     }
 }
