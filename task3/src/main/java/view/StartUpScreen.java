@@ -55,11 +55,13 @@ public class StartUpScreen extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        GameDifficulty difficulty = switch (e.getActionCommand()) {
-            case "level1" -> GameDifficulty.LEVEL1;
-            case "level2" -> GameDifficulty.LEVEL2;
-            default -> GameDifficulty.LEVEL3;
-        };
+        GameDifficulty difficulty;
+        if (e.getActionCommand().equals("level1"))
+            difficulty = GameDifficulty.LEVEL1;
+        else if (e.getActionCommand().equals("level2"))
+            difficulty = GameDifficulty.LEVEL2;
+        else
+            difficulty = GameDifficulty.LEVEL3;
 
         GameController gameController = new GameController(difficulty);
         SwingUtilities.invokeLater(() -> {

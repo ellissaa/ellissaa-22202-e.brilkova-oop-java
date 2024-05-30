@@ -26,11 +26,13 @@ public class GameController implements KeyListener, TickerListener {
     public GameController(GameDifficulty difficulty) {
         this.difficulty = difficulty;
 
-        int shootTimeout = switch (difficulty) {
-            case LEVEL1 -> 700;
-            case LEVEL2 -> 900;
-            case LEVEL3 -> 1100;
-        };
+        int shootTimeout;
+        if (difficulty == GameDifficulty.LEVEL1)
+            shootTimeout = 700;
+        else if (difficulty == GameDifficulty.LEVEL2)
+            shootTimeout = 900;
+        else
+            shootTimeout = 1100;
 
         player = new Player(fieldWidth / 2 - Player.playerWidth / 2,
                 fieldHeight - Player.playerHeight, shootTimeout);
@@ -50,11 +52,13 @@ public class GameController implements KeyListener, TickerListener {
         int gap = 15;
         int enemyWidth = EnemyDefault.enemyDefWidth + gap;
 
-        int shootFreqModifier = switch (difficulty) {
-            case LEVEL1 -> 1500;
-            case LEVEL2 -> 800;
-            case LEVEL3 -> 400;
-        };
+        int shootFreqModifier;
+        if (difficulty == GameDifficulty.LEVEL1)
+            shootFreqModifier = 1500;
+        else if (difficulty == GameDifficulty.LEVEL2)
+            shootFreqModifier = 800;
+        else
+            shootFreqModifier = 400;
 
         for (int i = offset; i < (fieldWidth - offset); i += enemyWidth) {
             ships.add(new EnemyDefault(i, 10, shootFreqModifier));
@@ -106,11 +110,13 @@ public class GameController implements KeyListener, TickerListener {
                         return;
                     }
                     shipsCopy.remove(ship);
-                    score += switch (difficulty) {
-                        case LEVEL1 -> 10;
-                        case LEVEL2 -> 15;
-                        case LEVEL3 -> 20;
-                    };
+
+                    if (difficulty.equals(GameDifficulty.LEVEL1))
+                        score += 10;
+                    else if (difficulty.equals(GameDifficulty.LEVEL2))
+                        score += 15;
+                    else
+                        score += 20;
                 }
             }
             moveBullet(bullet, bulletsCopy);
