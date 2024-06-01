@@ -25,14 +25,14 @@ public class Dealer {
     }
 
     public Car requestCar() {
-        Car car = carStockController.getCar();
+        Car car = carStockController.getCar(); // короче сделать через CarStock, чтобы дилер не знал про контролер
         logger.info("Dealer {}: Auto {} (Body: {}, Motor: {}, Accessory: {}",
                 id, car.getId(), car.getBody().getId(), car.getEngine().getId(),
                 car.getAccessory().getId());
         return car;
     }
 
-    public void startRequesting() {
+    public void startRequesting() { // в беск цикле запрашиваем новые машины
         while (true) {
             try {
                 Thread.sleep(requestTimeout);

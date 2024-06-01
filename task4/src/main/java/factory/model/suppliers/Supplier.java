@@ -26,7 +26,7 @@ public abstract class Supplier<T extends AbstractProduct> {
                 return;
             }
             T product = produce();
-            associatedStock.add(product);
+            associatedStock.add(product); // создали продукт, добавили на склад
         }
     }
 

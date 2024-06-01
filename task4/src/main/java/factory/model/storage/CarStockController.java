@@ -7,7 +7,7 @@ import factory.model.products.Car;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CarStockController implements AssemblyLineListener {
+public class CarStockController implements AssemblyLineListener { // отвечает за запросы на создание новых машин
     private final CarStock carStock;
     private final AssemblyLine assemblyLine;
     private int numPendingRequests;
@@ -18,7 +18,7 @@ public class CarStockController implements AssemblyLineListener {
         this.carStock = new CarStock(capacity);
         this.assemblyLine = assemblyLine;
         assemblyLine.setListener(this);
-        placeRequests(capacity);
+        placeRequests(capacity); // запросы на создание новых машин
     }
 
     public void addListener(CarStockControllerListener listener) {
@@ -36,9 +36,9 @@ public class CarStockController implements AssemblyLineListener {
             listener.pendingUpdated(numPendingRequests);
     }
 
-    synchronized public Car getCar() {
+    synchronized public Car getCar() { // дилеры запрашивают машины у контроллера
         while (carStock.isEmpty()) {
-            int numRequests = carStock.getCapacity() - carStock.getNumStored() - numPendingRequests;
+            int numRequests = carStock.getCapacity() - carStock.getNumStored() - numPendingRequests; // кол-во = полный склад
             placeRequests(numRequests);
             try {
                 wait();
@@ -56,7 +56,7 @@ public class CarStockController implements AssemblyLineListener {
     synchronized public void produced(Car car) {
         carStock.add(car);
         numPendingRequests--;
-        notify();
+        notify(); // для дилера, чтобы забрал машину
 
         for (CarStockControllerListener listener : listeners)
             listener.pendingUpdated(numPendingRequests);

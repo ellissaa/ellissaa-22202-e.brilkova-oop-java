@@ -8,7 +8,7 @@ import factory.model.storage.EngineStock;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class AssemblyLine {
+public class AssemblyLine { // пусть сборщик кладет на склад
     private final AccessoryStock accessoryStock;
     private final BodyStock bodyStock;
     private final EngineStock engineStock;

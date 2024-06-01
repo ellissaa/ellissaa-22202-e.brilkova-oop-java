@@ -77,7 +77,7 @@ public class Factory implements FactoryControllerListener {
         dealersThreadPool = Executors.newFixedThreadPool(numDealers);
     }
 
-    public void addListener(ModelListener listener) {
+    public void addListener(ModelListener listener) { // лисенер - вью, добавляем его всем складам
         listeners.add(listener);
 
         accessoryStock.addListener(listener);
@@ -86,7 +86,7 @@ public class Factory implements FactoryControllerListener {
         carStockController.addListener(listener);
     }
 
-    public void start() {
+    public void start() { // саплайеры поставляют детали на склад
         for (AccessorySupplier supplier : accessorySuppliers)
             suppliersThreadPool.submit(supplier::supplyToStock);
         suppliersThreadPool.submit(bodySupplier::supplyToStock);

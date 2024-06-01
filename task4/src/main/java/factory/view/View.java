@@ -89,7 +89,7 @@ public class View extends JFrame implements ModelListener {
     }
 
     @Override
-    public void pendingUpdated(int newPending) {
+    public void pendingUpdated(int newPending) { // запросы от дилеров, ожидающие исполнения
         SwingUtilities.invokeLater(() -> pendingCounter.setCounter(newPending));
     }
 
