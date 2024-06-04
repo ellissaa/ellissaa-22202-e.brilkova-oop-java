@@ -7,15 +7,13 @@ import factory.model.products.Car;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CarStockController implements AssemblyLineListener { // отвечает за запросы на создание новых машин
-    private final CarStock carStock;
+public class CarStockController implements AssemblyLineListener, CarStockListener { // отвечает за запросы на создание новых машин
     private final AssemblyLine assemblyLine;
     private int numPendingRequests;
 
     private final List<CarStockControllerListener> listeners = new ArrayList<>();
 
     public CarStockController(int capacity, AssemblyLine assemblyLine) {
-        this.carStock = new CarStock(capacity);
         this.assemblyLine = assemblyLine;
         assemblyLine.setListener(this);
         placeRequests(capacity); // запросы на создание новых машин
@@ -23,7 +21,6 @@ public class CarStockController implements AssemblyLineListener { // отвеч�
 
     public void addListener(CarStockControllerListener listener) {
         listeners.add(listener);
-        carStock.addListener(listener);
     }
 
     synchronized private void placeRequests(int numRequests) {
@@ -36,29 +33,15 @@ public class CarStockController implements AssemblyLineListener { // отвеч�
             listener.pendingUpdated(numPendingRequests);
     }
 
-    synchronized public Car getCar() { // дилеры запрашивают машины у контроллера
-        while (carStock.isEmpty()) {
-            int numRequests = carStock.getCapacity() - carStock.getNumStored() - numPendingRequests; // кол-во = полный склад
-            placeRequests(numRequests);
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                return null;
-            }
-        }
-
-        Car car = carStock.get();
-        placeRequests(1);
-        return car;
+    @Override
+    synchronized public void produced() {
+        numPendingRequests--;
+        for (CarStockControllerListener listener : listeners)
+            listener.pendingUpdated(numPendingRequests);
     }
 
     @Override
-    synchronized public void produced(Car car) {
-        carStock.add(car);
-        numPendingRequests--;
-        notify(); // для дилера, чтобы забрал машину
-
-        for (CarStockControllerListener listener : listeners)
-            listener.pendingUpdated(numPendingRequests);
+    public void requestCar() {
+        placeRequests(1);
     }
 }

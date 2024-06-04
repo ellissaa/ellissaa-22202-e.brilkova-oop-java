@@ -6,6 +6,7 @@ import factory.model.dealers.Dealer;
 import factory.model.exceptions.*;
 import factory.model.storage.*;
 import factory.model.suppliers.*;
+import factory.model.threadpool.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,7 @@ public class Factory implements FactoryControllerListener {
     private final AccessoryStock accessoryStock;
     private final BodyStock bodyStock;
     private final EngineStock engineStock;
+    private final CarStock carStock;
     private final CarStockController carStockController;
 
     private final AssemblyLine assemblyLine;
@@ -26,10 +28,10 @@ public class Factory implements FactoryControllerListener {
     private final AccessorySupplier[] accessorySuppliers;
     private final BodySupplier bodySupplier;
     private final EngineSupplier engineSupplier;
-    private final ExecutorService suppliersThreadPool;
+    private final ThreadPool suppliersThreadPool;
 
     private final Dealer[] dealers;
-    private final ExecutorService dealersThreadPool;
+    private final ThreadPool dealersThreadPool;
 
     private final List<ModelListener> listeners = new ArrayList<>();
 
@@ -49,11 +51,13 @@ public class Factory implements FactoryControllerListener {
             accessoryStock = new AccessoryStock(configReader.readAccessoryStockSize());
             bodyStock = new BodyStock(configReader.readBodyStockSize());
             engineStock = new EngineStock(configReader.readEngineStockSize());
+            carStock = new CarStock(configReader.readCarStockSize());
 
-            assemblyLine = new AssemblyLine(accessoryStock, bodyStock, engineStock,
+            assemblyLine = new AssemblyLine(accessoryStock, bodyStock, engineStock, carStock,
                     configReader.readNumWorkers());
             carStockController = new CarStockController(configReader.readCarStockSize(),
                     assemblyLine);
+            carStock.setCarStockListener(carStockController);
 
             numAccessorySuppliers = configReader.readNumAccessorySuppliers();
             numDealers = configReader.readNumDealers();
@@ -68,13 +72,13 @@ public class Factory implements FactoryControllerListener {
                     Supplier.DEFAULT_TIMEOUT, accessoryStock);
         bodySupplier = new BodySupplier(Supplier.DEFAULT_TIMEOUT, bodyStock);
         engineSupplier = new EngineSupplier(Supplier.DEFAULT_TIMEOUT, engineStock);
-        suppliersThreadPool = Executors.newFixedThreadPool(numAccessorySuppliers + 2);
+        suppliersThreadPool = new ThreadPool(numAccessorySuppliers + 2);
 
         dealers = new Dealer[numDealers];
         for (int i = 0; i < numDealers; i++) {
-            dealers[i] = new Dealer(Dealer.DEFAULT_TIMEOUT, carStockController);
+            dealers[i] = new Dealer(Dealer.DEFAULT_TIMEOUT, carStock);
         }
-        dealersThreadPool = Executors.newFixedThreadPool(numDealers);
+        dealersThreadPool = new ThreadPool(numDealers);
     }
 
     public void addListener(ModelListener listener) { // лисенер - вью, добавляем его всем складам
@@ -83,6 +87,7 @@ public class Factory implements FactoryControllerListener {
         accessoryStock.addListener(listener);
         bodyStock.addListener(listener);
         engineStock.addListener(listener);
+        carStock.addListener(listener);
         carStockController.addListener(listener);
     }
 

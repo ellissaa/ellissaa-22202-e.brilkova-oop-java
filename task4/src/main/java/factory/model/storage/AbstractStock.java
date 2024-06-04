@@ -11,7 +11,7 @@ public abstract class AbstractStock<T extends AbstractProduct> {
     protected final int capacity;
     protected final Stack<T> storedItems;
 
-    private final List<StockListener> listeners = new ArrayList<>();
+    protected final List<StockListener> listeners = new ArrayList<>();
 
     protected AbstractStock(int capacity) {
         this.capacity = capacity;

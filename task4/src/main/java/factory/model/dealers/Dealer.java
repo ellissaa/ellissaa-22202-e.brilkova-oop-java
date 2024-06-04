@@ -1,7 +1,7 @@
 package factory.model.dealers;
 
 import factory.model.products.Car;
-import factory.model.storage.CarStockController;
+import factory.model.storage.CarStock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,19 +14,19 @@ public class Dealer {
 
     private final UUID id;
     private int requestTimeout;
-    private final CarStockController carStockController;
+    private final CarStock carStock;
 
     private final Logger logger = LoggerFactory.getLogger(Dealer.class);
 
-    public Dealer(int requestTimeout, CarStockController controller) {
+    public Dealer(int requestTimeout, CarStock carStock) {
         this.requestTimeout = requestTimeout;
-        this.carStockController = controller;
+        this.carStock = carStock;
         id = UUID.randomUUID();
     }
 
     public Car requestCar() {
-        Car car = carStockController.getCar(); // короче сделать через CarStock, чтобы дилер не знал про контролер
-        logger.info("Dealer {}: Auto {} (Body: {}, Motor: {}, Accessory: {}",
+        Car car = carStock.get();
+        logger.info("Dealer {}: Auto {} (Body: {}, Motor: {}, Accessory: {})",
                 id, car.getId(), car.getBody().getId(), car.getEngine().getId(),
                 car.getAccessory().getId());
         return car;
